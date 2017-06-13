@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset = "UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="torreypines.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <div class="popup" data-popup="popup-1">
+    <div class="popup-inner">
+      <a href="http://torreypinesderm.staging.crystalcleardm.com/june-specials-2017/" target="_blank">
+      <img src="https://files.slack.com/files-pri/T1AJJA124-F5T1N1Y3V/pop-up.jpg" alt="image" />
+    </a>
+      <a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+    </div>
+    <div id="mask"></div>
+  </div>
+
+</body>
+
+<script>
+$(document).ready(function() {
+
+  /**
+  * Closes the mask/popup and calls setCookie function
+  *  @returns {false}
+  */
+  function closePop() {
+    $('#mask').hide();
+    $('.popup').hide();
+    setCookie('hide', true, 1);
+    return false;
+  }
+
+  /**
+  * Reads cookie by name
+  * @param {string} cName cookie name
+  * @returns {string} cValue
+  */
+  function getCookie(cName) {
+    var cValue = document.cookie;
+    var cStart = cValue.indexOf(" " + cName + "=");
+    if (cStart == -1) {
+      cStart = cValue.indexOf(cName + "=");
+    }
+    if (cStart == -1) {
+      cValue = null;
+    } else {
+      cStart = cValue.indexOf("=", cStart) + 1;
+      var cEnd = cValue.indexOf(";", cStart);
+      if (cEnd == -1) {
+        cEnd = cValue.length;
+      }
+      cValue = unescape(cValue.substring(cStart, cEnd));
+    }
+    return cValue;
+  }
+
+  /**
+  * Sets a cookie
+  * @param {string} cName cookie name
+  * @param {bool} value cookie value
+  * @param {number} exdays days until cookie expires
+  */
+  function setCookie(cName, value, exdays) {
+    var d = new Date();
+    d.setDate(d.getDate() + exdays);
+    var cValue = escape(value) + ((exdays == null) ? "" : "; expires=" + d.toUTCString());
+    document.cookie = cName + "=" + cValue;
+  }
+
+  //If no cookie, execute the popup
+  if (!getCookie('hide')) {
+    var id = '.popup';
+
+    //Get the screen height and width
+    var maskHeight = $(document).height();
+    var maskWidth = $(window).width();
+
+    //Set height and width to mask to fill up the whole screen
+    $('#mask').css({
+      'width': maskWidth,
+      'height': maskHeight
+    });
+
+    //Transition effect
+    $('#mask').fadeIn(100);
+    $('#mask').fadeTo("slow", 0.9);
+
+    //Get window height and width
+    var winH = $(window).height();
+    var winW = $(window).width();
+
+    //Set the popup window to center
+    $(id).css('top', winH / 2 - $(id).height() / 2);
+    $(id).css('left', winW / 2 - $(id).width() / 2);
+
+    //Pop Up Open after 3 second delay
+    $(id).fadeIn("slow");
+}
+    //Close if 'esc' pressed
+    $(document).keyup(function(e){
+
+      if(e.keyCode === 27){   //'ESC'
+      closePop();
+    }
+  });
+
+  //Close on 'x' click
+  $('.popup .popup-close').click(function(e) {
+    closePop();
+  });
+
+  //Close on mask click
+  $('#mask').click(function() {
+    closePop();
+  });
+
+  //Form Validations
+  $('#contact_name').on('input', function() {
+    var input=$(this);
+    var is_name=input.val();
+    if(is_name){input.removeClass("invalid").addClass("valid");}
+    else{input.removeClass("valid").addClass("invalid");}
+  });
+
+  $('#contact_email').on('input', function() {
+    var input=$(this);
+    var re = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var is_email=re.test(input.val());
+    if(is_email){input.removeClass("invalid").addClass("valid");}
+    else{input.removeClass("valid").addClass("invalid");}
+  });
+
+  $('#contact_number').on('input', function() {
+    var input=$(this);
+    var re = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+    var is_number=re.test(input.val());
+    if(is_number){input.removeClass("invalid").addClass("valid");}
+    else{input.removeClass("valid").addClass("invalid");}
+  });
+
+  $(".submit").click(function(event){
+    var form_data=$("#signup").serializeArray();
+    var error_free=true;
+    for (var input in form_data){
+      var element=$("#contact_"+form_data[input]['name']);
+      if(!element.hasClass("valid"))
+      {
+        error_free=false;
+      }
+    }
+    if (!error_free){
+      event.preventDefault();
+    }
+    else{
+      alert('Form will be submitted');
+    }
+  });
+});
+</script>
+
+</script>
+</html>
